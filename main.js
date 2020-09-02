@@ -15,20 +15,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .then((data) => {
                 data = JSON.parse(data)
 
-                 container.innerHTML = printCD(data.results);
+                console.log(data);
+                console.log(data.results.length);
+                if(!data.results.length == 0){
+                    container.innerHTML = printCD(data.results);
+                } else {
+                    container.innerHTML = "nessun risultato"
+                }
 
-                data.results.forEach((item) => {
-                    console.log(item.title);
-                    console.log(item.original_title);
-                    console.log(item.original_language);
-                    console.log(item.vote_average);
-                });
 
-        }).catch(error => {
-            container.innerHTML = "nessun risultato"
-            console.log("Si è verificato un errore!")
-        })
+                // data.results.forEach((item) => {
+                //     console.log(item.title);
+                //     console.log(item.original_title);
+                //     console.log(item.original_language);
+                //     console.log(item.vote_average);
+                // });
 
+        }).catch(error => console.log("Si è verificato un errore!"))
     })
 
     function printCD(array){
