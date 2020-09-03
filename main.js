@@ -1,16 +1,31 @@
 document.addEventListener('DOMContentLoaded', (event) => {
 
-    const apiKey = "5735ba8aa714f2161c6a9f7f267223ef"
     const search = document.querySelector(".search")
     const button = document.querySelector("button")
+    const input = document.querySelector("input")
+    const container = document.querySelector(".container")
 
     button.addEventListener("click", () => {
+        query()
+        input.focus();
+    })
+
+    input.addEventListener("keydown", (e) => {
+        if (e.keyCode === 13) {
+           query()
+           input.focus();
+        }
+    })
+
+    function query() {
 
         const query = search.querySelector("input").value
+        search.querySelector("input").value = ""
 
-        const container = document.querySelector(".container")
+        const apiKey = "5735ba8aa714f2161c6a9f7f267223ef"
+        const language = "it-IT"
 
-        fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${query}&include_adult=false`)
+        fetch(`https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=en-US&query=${query}&include_adult=false`)
             .then((res) => res.text())
             .then((data) => {
                 data = JSON.parse(data)
@@ -20,44 +35,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     item.vote_average = item.vote_average / 2
                     item.vote_average = Math.round(item.vote_average)
 
-                    fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=5735ba8aa714f2161c6a9f7f267223ef&language=en-US`)
-                        .then((res) => res.text())
-                        .then((dataGen) => {
-                            dataGen = JSON.parse(dataGen)
-
-                            const categoriesName = dataGen.genres.reduce(
-                                (values, item) => {
-                                    if(!values.includes(item.name)){
-                                        values.push(item.name)
-                                    }
-                                      return values;
-                                },[]
-                            )
-                            const categoriesID = dataGen.genres.reduce(
-                                (values, item) => {
-                                    if(!values.includes(item.id)){
-                                        values.push(item.id)
-                                    }
-                                    return values;
-                                },[]
-                            )
-
-                            // console.log(item.genre_ids);
-
-                            if(item.genre_ids !== undefined){
-                                for(let i = 0; i < item.genre_ids.length; i++){
-                                    let queries = item.genre_ids[i]
-                                    if(categoriesID.includes(queries)){
-                                        let yy = categoriesID.indexOf(queries)
-                                        yy = categoriesName[yy]
-                                        // console.log(yy);
-                                    }
-                                }
-                            }
-
-
-                    }).catch(error => console.log("Si è verificato un errore!"))
-            })
+                })
 
                 if(data.total_results > 0){
                     container.innerHTML = printCD(data.results);
@@ -67,7 +45,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
         }).catch(error => console.log("Si è verificato un errore!"))
-    })
+    }
 
     function printCD(array){
 
