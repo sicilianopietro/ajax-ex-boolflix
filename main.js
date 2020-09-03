@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function query() {
 
-        const query = search.querySelector("input").value
-        search.querySelector("input").value = ""
-
         const apiKey = "5735ba8aa714f2161c6a9f7f267223ef"
         const language = "it-IT"
+
+        const query = search.querySelector("input").value
+        search.querySelector("input").value = ""
 
         fetch(`https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=${language}&query=${query}&include_adult=false`)
             .then((res) => res.text())
@@ -92,17 +92,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 item.poster_path = ""
             }
 
-            return `
-                <ul class="${item.media_type}" data-id="${item.id}">
-                    <li>${item.title}</li>
-                    <li>${item.original_title}</li>
-                    <li>${item.original_language}</li>
-                    <li>${star}${starOut}</li>
-                    <li>${item.media_type}</li>
-                    <img src="${imgPath}${item.poster_path}" alt="">
-                    <li>${item.overview}</li>
-                </ul>`;
+            return `<ul class="${item.media_type}" data-id="${item.id}">
+                        <li>${item.title}</li>
+                        <li>${item.original_title}</li>
+                        <li>${item.original_language}</li>
+                        <li>${star}${starOut}</li>
+                        <li>${item.media_type}</li>
+                        <img src="${imgPath}${item.poster_path}" alt="">
+                        <li>${item.overview}</li>
+                    </ul>`;
             }).join("")
+            
         return displayArray
     }
 });
