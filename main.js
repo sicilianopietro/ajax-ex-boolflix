@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const apiKey = "5735ba8aa714f2161c6a9f7f267223ef"
         const language = "it-IT"
 
-        fetch(`https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=en-US&query=${query}&include_adult=false`)
+        fetch(`https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=${language}&query=${query}&include_adult=false`)
             .then((res) => res.text())
             .then((data) => {
                 data = JSON.parse(data)
