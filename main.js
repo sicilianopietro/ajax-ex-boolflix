@@ -100,9 +100,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         <li>${item.media_type}</li>
                         <img src="${imgPath}${item.poster_path}" alt="">
                         <li>${item.overview}</li>
-                    </ul>`;
+            </ul>`;
             }).join("")
-            
+
         return displayArray
     }
 });
