@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 data.results.forEach((item) => {
 
                     item.vote_average = item.vote_average / 2
+                    console.log(item.vote_average);
+                    console.log(item.vote_average % 2);
                     item.vote_average = Math.round(item.vote_average)
 
                 })
@@ -56,27 +58,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             let star = '<i class="fas fa-star"></i>'
             let starOut ='<i class="far fa-star"></i>'
+            let startHalf = '<i class="fas fa-star-half-alt"></i>'
             let imgPath ='https://image.tmdb.org/t/p/w342'
             star = star.repeat(x)
             starOut = starOut.repeat(y)
 
-            if(item.media_type == "movie"){
-                item.media_type = "film"
-            }
-            if(item.original_language == "it"){
-                item.original_language = '<span class="flag-icon flag-icon-it"></span>'
+
+            const myArrLang = ["it", "es", "de", "fr"]
+
+            if (myArrLang.includes(item.original_language)){
+                let index = myArrLang.indexOf(item.original_language)
+                item.original_language = `<span class="flag-icon flag-icon-${myArrLang[index]}"></span>`
             }
             if(item.original_language == "en"){
-                item.original_language = '<span class="flag-icon flag-icon-gb-eng"></span>'
+                item.original_language = '<span class="flag-icon flag-icon-gb"></span>'
             }
-            if(item.original_language == "es"){
-                item.original_language = '<span class="flag-icon flag-icon-es"></span>'
-            }
-            if(item.original_language == "de"){
-                item.original_language = '<span class="flag-icon flag-icon-de"></span>'
-            }
-            if(item.original_language == "fr"){
-                item.original_language = '<span class="flag-icon flag-icon-fr"></span>'
+            if(item.media_type == "movie"){
+                item.media_type = "film"
             }
             if(item.poster_path == null){
                 item.poster_path = ""
