@@ -5,6 +5,9 @@
     display: flex;
     overflow-x: auto;
 }
+.section > div {
+    min-height: 370px; 
+}
 .movie {
     border: 1px solid black;
     min-width: 200px;
