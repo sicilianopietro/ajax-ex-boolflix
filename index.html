@@ -8,15 +8,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"/>
     <link rel="stylesheet" href="style.css">
     <script src="main.js" charset="utf-8"></script>
-    <title>boolflix</title>
+    <title>Document</title>
 </head>
 <body>
-    <div class="search">
-        <label for="query"></label>
-        <input type="text" id="query" placeholder="inserisci">
-        <button>Cerca</button>
-    </div>
     <div class="container">
+        <div class="header">
+            <div class="research">
+               <label for="query"></label>
+               <input type="text" id="query" placeholder="inserisci nome">
+            </div>
+            <div class="filter">
+                
+            </div>
+        </div>
+
+        <div  class="section upComing">
+            <h2>Nuove Uscite</h2>
+            <div>
+                <h3>Film</h3>
+                <div class="upComingMovie"></div>
+            </div>
+            <div>
+                <!-- <h3>Tv</h3> -->
+                <div class="upComingTv"></div>
+            </div>
+
+        </div>
+
+        <div  class="section search">
+            <div class="film">
+                <h3>Film</h3>
+                <div class="reSearchMovie"></div>
+            </div>
+            <div class="tv">
+                <h3>Tv</h3>
+                <div class="reSearchTv"></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

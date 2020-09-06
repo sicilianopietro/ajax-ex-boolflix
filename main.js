@@ -1,106 +1,250 @@
 document.addEventListener('DOMContentLoaded', (event) => {
 
-    const search = document.querySelector(".search")
-    const button = document.querySelector("button")
-    const input = document.querySelector("input")
     const container = document.querySelector(".container")
+    const movies = container.querySelector(".reSearchMovie")
+    const tv = container.querySelector(".reSearchTv")
+    const upComingMovie = container.querySelector(".upComingMovie")
+    const upComingTv = container.querySelector(".upComingTv")
+    const input = container.querySelector("input")
+    const search = container.querySelector(".search")
+    const filter = container.querySelector(".filter")
 
-    button.addEventListener("click", () => {
-        query()
-        input.focus();
-    })
+    const api_key = "5d30d2a36f43238040a203ecca48cbf5"
+    let path = "https://api.themoviedb.org/3"
 
-    input.addEventListener("keydown", (e) => {
+    input.addEventListener("keyup", (e) => {
+        search.style.display = "block";
+        const value = input.value
+        query(value, movies)
+        query(value, tv)
+
         if (e.keyCode === 13) {
-           query()
-           input.focus();
+            const query = input.value
+            input.value = ""
+            search_1(query, movies)
+            search_1(query, tv)
+            input.focus();
         }
     })
 
-    function query() {
+    movieUpcoming(upComingMovie, movies)
+    // tvUpcoming(upComingTv, tv)
 
-        const apiKey = "5735ba8aa714f2161c6a9f7f267223ef"
-        const language = "it-IT"
+    fetch("https://api.themoviedb.org/3/genre/movie/list?api_key=5d30d2a36f43238040a203ecca48cbf5&language=it-IT")
+        .then((res) => res.json())
+        .then((data) =>  {
 
-        const query = search.querySelector("input").value
-        search.querySelector("input").value = ""
+            const myArr = data.genres
 
-        fetch(`https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=${language}&query=${query}&include_adult=false`)
-            .then((res) => res.text())
-            .then((data) => {
-                data = JSON.parse(data)
+            myArr.unshift({id: 0, name: "All"})
+            const categoryBtns = myArr.map((genres) => {
+            return `
+                <button type="button" class="filter-btn" data-id=${genres.name}>
+                    ${genres.name}
+                </button>
+            `
+            }).join("");
 
-                data.results.forEach((item) => {
+            filter.innerHTML = categoryBtns;
 
-                    item.vote_average = item.vote_average / 2
-                    console.log(item.vote_average);
-                    console.log(item.vote_average % 2);
-                    item.vote_average = Math.round(item.vote_average)
+            const filterBtns = filter.querySelectorAll(".filter-btn");
+
+
+            filterBtns.forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const genre = e.currentTarget.dataset.id                    
+
+                    // const x = upComingMovie.querySelectorAll('p')
+                    // const x = container.querySelectorAll('p')
+                    const y = container.querySelectorAll('[class$="Movie"]')
+
+                    y.forEach((item) => {
+
+                        const x = item.querySelectorAll('p')
+                        x.forEach((item) => {
+
+                            item.parentElement.classList.remove("hide")
+
+                            if(!item.classList.contains(genre)) {
+                                item.parentElement.classList.add("hide")
+                            }
+                            if(genre == "All") {
+                                item.parentElement.classList.remove("hide")
+                            }
+                        });
+                    });
+
 
                 })
+            });
 
-                if(data.total_results > 0){
-                    container.innerHTML = printCD(data.results);
-                } else {
-                    container.innerHTML = "nessun risultato"
-                }
+        }).catch((err) => console.log(err));
 
 
-        }).catch(error => console.log("Si è verificato un errore!"))
+
+    function movieUpcoming(append, type) {
+
+        append == tv ? type = "tv" : type = "movie"
+
+        const upComingPath = "/movie/upcoming"
+
+        const url = `${path}${upComingPath}?api_key=${api_key}&language=it-IT`
+
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {append.innerHTML = printCD(data.results, type, upComingMovie)})
+            .catch((err) => console.log(err));
     }
 
-    function printCD(array){
+    function tvUpcoming(append, type) {
 
-        const displayArray = array.map((item) => {
+        append == tv ? type = "tv" : type = "movie"
 
-            let x = item.vote_average
-            let y = 5 - x
+        const upComingPath = "/tv/popular"
 
-            let star = '<i class="fas fa-star"></i>'
-            let starOut ='<i class="far fa-star"></i>'
-            let startHalf = '<i class="fas fa-star-half-alt"></i>'
-            let imgPath ='https://image.tmdb.org/t/p/w342'
-            star = star.repeat(x)
-            starOut = starOut.repeat(y)
+        const url = `${path}${upComingPath}?api_key=${api_key}&language=it-IT`
 
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {append.innerHTML = printCD(data.results, type)})
+            .catch((err) => console.log(err));
+    }
+
+    function query(value, append, type) {
+
+        append == tv ? type = "tv" : type = "movie"
+
+        const url = `${path}/search/${type}?api_key=${api_key}&language=it-IT&query=${value}&include_adult=false`
+
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {append.innerHTML = printCD(data.results, type, append)})
+            .catch((err) => console.log(err));
+    }
+
+    function printCD(array, type, append){
+
+        let indice = 0;
+
+        const displayArray = array.map((movie) => {
+
+            const genresPath = "/genre/movie/list"
+            const url = `${path}${genresPath}?api_key=${api_key}&language=it-IT`
+
+            fetch(url)
+                .then((res) => res.json())
+                .then((data) =>  {
+                    // console.log(movie.title);
+                    // console.log(movie.genre_ids);
+                    const movieGenres = searchGenres (data, movie)
+                    // console.log(movieGenres);
+                    printGenres(movieGenres, append, indice)
+                    indice++;
+                    }
+                )
+                .catch((err) => console.log(err));
+
+            if(movie.title == undefined){
+                movie.title = movie.name
+            }
+            if(movie.original_title == undefined){
+                movie.original_title = movie.original_name
+            }
 
             const myArrLang = ["it", "es", "de", "fr"]
-
-            if (myArrLang.includes(item.original_language)){
-                let index = myArrLang.indexOf(item.original_language)
-                item.original_language = `<span class="flag-icon flag-icon-${myArrLang[index]}"></span>`
+            if (myArrLang.includes(movie.original_language)){
+                let index = myArrLang.indexOf(movie.original_language)
+                movie.original_language = `<span class="flag-icon flag-icon-${myArrLang[index]}"></span>`
             }
-            if(item.original_language == "en"){
-                item.original_language = '<span class="flag-icon flag-icon-gb"></span>'
-            }
-            if(item.media_type == "movie"){
-                item.media_type = "film"
-            }
-            if(item.poster_path == null){
-                item.poster_path = ""
-            }
-            if(item.title == undefined){
-                item.title = item.name
-            }
-            if(item.original_title == undefined){
-                item.original_title = item.original_name
-            }
-            if(item.poster_path == ""){
-                imgPath = "./img/404.jpg"
-                item.poster_path = ""
+            if(movie.original_language == "en"){
+                movie.original_language = '<span class="flag-icon flag-icon-gb"></span>'
             }
 
-            return `<ul class="${item.media_type}" data-id="${item.id}">
-                        <li>${item.title}</li>
-                        <li>${item.original_title}</li>
-                        <li>${item.original_language}</li>
-                        <li>${star}${starOut}</li>
-                        <li>${item.media_type}</li>
-                        <img src="${imgPath}${item.poster_path}" alt="">
-                        <li>${item.overview}</li>
-            </ul>`;
-            }).join("")
+            let star = stars(movie).join("")
+
+            movie.overview = movie.overview.substring(0, 20);
+
+            let src = `https://image.tmdb.org/t/p/w185/${movie.poster_path}`
+            if (movie.poster_path == null){
+                src = `./img/404.jpg`
+            }
+
+            return `
+            <div class="movie" data-id="${movie.id}">
+                <div class="title">${movie.title}</div>
+                <div class="original_title">${movie.original_title}</div>
+                <div class="original_language">${movie.original_language}</div>
+                <div class="star">${star}</div>
+                <div class="type">${type}</div>
+                <div class="overview">${movie.overview}...</div>
+                <img class="poster" src="${src}" alt="">
+            </div>
+            `
+        }).join("")
 
         return displayArray
     }
+
+    function searchGenres (data, movie) {
+        const generi = [];
+        for (let i = 0; i < movie.genre_ids.length; i++){
+            for (let j = 0; j < data.genres.length; j++ ){
+                if(movie.genre_ids[i] == data.genres[j].id){
+                    generi.push(data.genres[j].name)
+                }
+            }
+        }
+        return generi
+    }
+
+    function printGenres(generi, append, indice) {
+
+        const mymovieElement = document.createElement("p")
+
+        for (let i = 0; i < generi.length; i++) {
+            mymovieElement.classList.add(generi[i])
+        }
+
+        // mymovieElement.setAttribute("value", [generi]);
+        mymovieElement.innerHTML = generi
+
+        const miei_generi = append.querySelectorAll(".movie")
+
+        if(miei_generi.length > 0) {
+            miei_generi[indice].appendChild(mymovieElement)
+        }
+
+    }
+
+    function stars(movie) {
+        movie.vote_average = Math.round(movie.vote_average / 2)
+        let y = 5 - movie.vote_average
+        let star = '<i class="fas fa-star"></i>'
+        let starOut ='<i class="far fa-star"></i>'
+        star = star.repeat(movie.vote_average)
+        starOut = starOut.repeat(y)
+        return [star, starOut]
+    }
+
+    // function searchMultipla(value) {
+    //
+    //     const url_movie = "/search/movie"
+    //     const url_tv = "/search/tv"
+    //
+    //     const url_1 = `${path}${url_movie}?api_key=${api_key}&language=it-IT&query=${query}&include_adult=false`
+    //     const url_2 = `${path}${url_tv}?api_key=${api_key}&language=it-IT&query=${query}&include_adult=false`
+    //
+    //     Promise.all([
+    //         fetch(url_1).then(value => value.json()),
+    //         fetch(url_2).then(value => value.json())
+    //     ]).then(allResponses => {
+    //         movies.innerHTML = printCD(allResponses[0].results)
+    //         tv.innerHTML = printCD(allResponses[1].results)
+    //     })
+    //
+    // }
+
+
+
+
 });

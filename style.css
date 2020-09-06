@@ -1,41 +1,41 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.reSearchMovie,
+.reSearchTv,
+.upComingMovie,
+.upComingTv {
+    display: flex;
+    overflow-x: auto;
 }
-body {
+.movie {
+    border: 1px solid black;
+    min-width: 200px;
+    min-height: 300px;
+    margin: 5px;
+}
+.upComing {
+    background-color: #eee;
+}
+.search {
+    display: none;
     background-color: #ccc;
 }
-ul {
-    list-style: none;
-}
-.container {
-    display: flex;
-    flex-wrap: wrap;
-}
-.container ul {
-    width: 300px;
-    height: 500px;
-    background-color: #eee;
-    border: 1px solid black;
-    margin: 5px;
-    position: relative;
-}
-.container ul.person {
+.movie > *:not(img){
     display: none;
 }
-.container ul li {
-    opacity: 0;
+.movie:hover img{
+    display: none;
 }
-.container ul:hover > img {
-    opacity: 0;
+.movie:hover *:not(img) {
+    display: block;
 }
-.container ul:hover > li {
-    opacity: 1;
+.movie:hover .star {
+    display: flex;
 }
-.container ul img {
-    width: 300px;
-    height: 500px;
-    position: absolute;
-    top: 0;
+.movie:hover .original_language {
+    display: block;
+}
+.hide {
+    display: none;
+}
+.show {
+    display: block;
 }
