@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     })
 
     // append category buttons
-    btnFilter()
+    btnFilter()    
     // nuove uscite
-    upComingMovie()
+    query("", queryPathUpComing(), upComing, movieDetails, movieCredit)
 
     //* FUNCTION *//
 
@@ -94,26 +94,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         fetch(url)
             .then((res) => res.json())
-            .then((data) => result(data.results, type, input, container, details, credit))
+            .then((data) => result(data.results, type, container, details, credit))
             .catch((err) => console.log(err))
 
     }
-    function upComingMovie(){
-        const type = "/movie/upcoming"
 
-        const url = `${path}${type}?api_key=${api_key}&language=it-IT&include_adult=false`
-
-        fetch(url)
-        .then((res) => res.json())
-        .then((data) => resultUpcoming(data.results, type, upComing))
-        .catch((err) => console.log(err))
-
-    }
 
     // path
     function queryMovie(){
         const moviePath = "/search/movie"
         return moviePath
+    }
+    function queryPathUpComing(){
+        const tvPath = "/movie/upcoming"
+        return tvPath
     }
     function queryPathTv(){
         const tvPath = "/search/tv"
@@ -137,7 +131,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     // risultati ricerca
-    function result(array, type, input, container, parametro1, parametro2){
+    function result(array, type, container, parametro1, parametro2){
 
         if(array.length > 0) {
 
@@ -175,40 +169,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             container.innerHTML = "nessun risultato"
         }
 
-    }
-
-    // risultati film upcoming
-    function resultUpcoming(array, type, container){
-
-        const myArr = []
-
-        array.forEach((item) => {
-            myArr.push(item.id)
-        });
-
-        container.innerHTML = printTemplate(array, type, "w342")
-
-        myArr.forEach((item) => {
-
-            const movie = container.querySelector(`div.movie[data-id='${item}']`)
-
-            let moviePath = movieDetails(item)
-            let url = `${path}${moviePath}?api_key=${api_key}&language=it-IT&`
-
-            fetch(url)
-                .then((res) => res.json())
-                .then((data) => genres(data.genres, item, movie))
-                .catch((err) => console.log(err))
-
-            moviePath = movieCredit(item)
-            url = `${path}${moviePath}?api_key=${api_key}&language=it-IT`
-
-            fetch(url)
-                .then((res) => res.json())
-                .then((data) => cast(data.cast, item, movie))
-                .catch((err) => console.log(err))
-
-        })
     }
 
     // genres
