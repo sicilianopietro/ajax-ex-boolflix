@@ -1,25 +1,21 @@
-.reSearchMovie,
-.reSearchTv,
+.container,
 .upComingMovie,
-.upComingTv {
+.containerTv {
     display: flex;
     overflow-x: auto;
 }
-.section > div {
-    min-height: 370px; 
+.section {
+    min-height: 610px;
 }
 .movie {
     border: 1px solid black;
-    min-width: 200px;
-    min-height: 300px;
     margin: 5px;
+    min-width: 350px;
+    min-height: 500px;
 }
-.upComing {
-    background-color: #eee;
-}
-.search {
-    display: none;
-    background-color: #ccc;
+.movie img {
+    width: 100%;
+    height: 100%;
 }
 .movie > *:not(img){
     display: none;
