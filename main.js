@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const upComing = document.querySelector(".upComingMovie")
     const container = document.querySelector(".container")
     const sectionmovies = document.querySelector(".film")
-    const sectionTv = document.querySelector(".tv")
+    const sectionTv = document.querySelector(".Tv")
     const containerTv = document.querySelector(".containerTv")
     const input = document.querySelector("input")
 
@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         sectionTv.classList.remove("hide")
         const value = input.value
         if(value != ""){
-            query(value, queryMovie(), container, movieDetails, movieCredit)
-            query(value, queryPathTv(), containerTv, tvDetails, tvCredit)
+            query(value, queryMovie(), container, movieDetails, movieCredit, "movie")
+            query(value, queryPathTv(), containerTv, tvDetails, tvCredit, "tv")
         } else {
             container.innerHTML = ""
         }
@@ -26,10 +26,44 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     })
 
+    upComing.addEventListener('wheel', (e) => {
+
+          if(e.type != 'wheel'){return}
+
+          let delta = ((
+              e.deltaY || -e.wheelDelta || e.detail) >> 10) || 1; delta = delta * (-360);
+
+          upComing.scrollLeft -= delta;
+          // upComing.scrollLeft -= delta;
+          e.preventDefault();
+    });
+    container.addEventListener('wheel', (e) => {
+
+          if(e.type != 'wheel'){return}
+
+          let delta = ((
+              e.deltaY || -e.wheelDelta || e.detail) >> 10) || 1; delta = delta * (-360);
+
+          container.scrollLeft -= delta;
+          // upComing.scrollLeft -= delta;
+          e.preventDefault();
+    });
+    containerTv.addEventListener('wheel', (e) => {
+
+          if(e.type != 'wheel'){return}
+
+          let delta = ((
+              e.deltaY || -e.wheelDelta || e.detail) >> 10) || 1; delta = delta * (-360);
+
+          containerTv.scrollLeft -= delta;
+          // upComing.scrollLeft -= delta;
+          e.preventDefault();
+    });
+
     // append category buttons
-    btnFilter()    
+    btnFilter()
     // nuove uscite
-    query("", queryPathUpComing(), upComing, movieDetails, movieCredit)
+    query("", queryPathUpComing(), upComing, movieDetails, movieCredit, "movie")
 
     //* FUNCTION *//
 
@@ -87,18 +121,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     // query
-    function query(input, type, container, details, credit){
+    function query(input, type, container, details, credit, queryType){
 
         const moviePath = type
         const url = `${path}${moviePath}?api_key=${api_key}&language=it-IT&query=${input}&include_adult=false`
 
         fetch(url)
             .then((res) => res.json())
-            .then((data) => result(data.results, type, container, details, credit))
+            .then((data) => result(data.results, type, container, details, credit, queryType))
             .catch((err) => console.log(err))
 
     }
-
 
     // path
     function queryMovie(){
@@ -121,17 +154,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const movieCred = `/movie/${movie_id}/credits`
         return movieCred
     }
-    function tvDetails(movie_id){
-        const movieDet = `/tv/${movie_id}`
+    function tvDetails(tv_id){
+        const movieDet = `/tv/${tv_id}`
         return movieDet
     }
-    function tvCredit(movie_id){
-        const movieCred = `/tv/${movie_id}/credits`
+    function tvCredit(tv_id){
+        const movieCred = `/tv/${tv_id}/credits`
         return movieCred
     }
 
     // risultati ricerca
-    function result(array, type, container, parametro1, parametro2){
+    function result(array, type, container, parametro1, parametro2, queryType){
 
         if(array.length > 0) {
 
@@ -145,7 +178,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             myArr.forEach((item) => {
 
-                const movie = container.querySelector(`div.movie[data-id='${item}']`)
+                const movie = container.querySelector(`div.${queryType}[data-id='${item}']`)
 
                 let moviePath = parametro1(item)
                 let url = `${path}${moviePath}?api_key=${api_key}&language=it-IT&include_adult=false`
@@ -164,11 +197,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     .catch((err) => console.log(err))
 
             })
-
         }else {
             container.innerHTML = "nessun risultato"
         }
-
     }
 
     // genres
@@ -234,22 +265,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // stampa il template
     function printTemplate(array, type, imgSize){
 
-        if(type == "/search/movie" || type == "/movie/upcoming"){
-            type = "movie"
-        }
-        if(type == "/search/tv"){
-            type = "tv"
-        }
-
-
         const displayArray = array.map((movie) => {
+
+            if(type == "/search/movie" || type == "/movie/upcoming"){
+                type = "movie"
+            }
+            if(type == "/search/tv"){
+                type = "tv"
+            }
 
             if(movie.title == undefined){
                movie.title = movie.name
-           }
-           if(movie.original_title == undefined){
-               movie.original_title = movie.original_name
-           }
+            }
+            if(movie.original_title == undefined){
+                movie.original_title = movie.original_name
+            }
 
             let star = stars(movie).join("")
 
@@ -262,20 +292,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 movie.original_language = '<span class="flag-icon flag-icon-gb"></span>'
             }
 
-            // imgSize = "w342"
-
             let src = `https://image.tmdb.org/t/p/${imgSize}/${movie.poster_path}`
             if (movie.poster_path == null){
                 src = `./img/404.jpg`
             }
 
+            movie.overview = movie.overview.substring(0, 100);
+
+            if(movie.title == movie.original_title){
+                movie.original_title = ""
+            }
+            if(movie.name == movie.original_name){
+                movie.original_title = ""
+            }
+
             return `
-            <div class="movie" data-id="${movie.id}">
+            <div class="${type}" data-id="${movie.id}">
                 <div class="title">${movie.title}</div>
                 <div class="original_title">${movie.original_title}</div>
                 <div class="star">${star}</div>
                 <div class="type">${type}</div>
                 <div class="original_language">${movie.original_language}</div>
+                <div class="overview">${movie.overview}</div>
                 <img class="poster" src="${src}" alt="">
             </div>
             `

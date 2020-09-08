@@ -1,36 +1,133 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 6px;
+}
+body {
+    background-color: #000;
+}
+h2 {
+    color: white
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 0;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+/* ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
+/* END SCROLLBAR */
+
+
+.header {
+    padding: 0 70px;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+input {
+    outline: none;
+}
+.main {
+    margin-top: 40px;
+}
+.search {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .container,
 .upComingMovie,
 .containerTv {
     display: flex;
     overflow-x: auto;
 }
+button {
+    letter-spacing: 1px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 2px;
+    background-color: #fff;
+    margin: 0 10px;
+    padding: 5px 10px;
+    transition: 0.2s;
+}
+button:hover {
+    color: #fff;
+    background-color:#000;
+    border: 1px solid #fff;
+    border-radius: 2px;
+    transform: scale(1.05);
+}
 .section {
     min-height: 610px;
 }
-.movie {
-    border: 1px solid black;
+.movie,
+.tv {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
     margin: 5px;
     min-width: 350px;
     min-height: 500px;
+    max-width: 350px;
+    max-height: 500px;
 }
-.movie img {
+.movie img,
+.tv img {
     width: 100%;
     height: 100%;
 }
-.movie > *:not(img){
+.movie > *:not(img),
+.tv > *:not(img) {
     display: none;
 }
-.movie:hover img{
+.movie:hover img,
+.tv:hover img {
     display: none;
 }
-.movie:hover *:not(img) {
+.movie:hover,
+.tv:hover {
+    padding: 10px;
+    border-radius: 2px;
+    border: 1px solid #fff;
     display: block;
 }
-.movie:hover .star {
+.movie:hover *:not(img),
+.tv:hover *:not(img) {
+    display: block;
+}
+.movie:hover .star,
+.tv:hover .star {
     display: flex;
 }
-.movie:hover .original_language {
+.movie:hover .original_language,
+.tv:hover .original_language {
     display: block;
+}
+.movie p,
+.movie span,
+.movie .overview,
+.tv p,
+.tv span,
+.tv .overview  {
+    margin: 40px 0;
+}
+.movie .overview {
+    order: 1;
 }
 .hide {
     display: none;
