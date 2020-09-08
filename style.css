@@ -8,6 +8,10 @@
 body {
     background-color: #000;
 }
+.body_container{
+    max-width: 1200px;
+    margin: 0 auto;
+}
 h2 {
     color: white
 }
@@ -37,10 +41,8 @@ h2 {
     align-items: center;
 }
 input {
+    width: 250px;
     outline: none;
-}
-.main {
-    margin-top: 40px;
 }
 .search {
     height: 40px;
@@ -48,11 +50,16 @@ input {
     align-items: center;
     justify-content: center;
 }
+.main,
+.search {
+    margin: 40px 60px;
+}
 .container,
 .upComingMovie,
 .containerTv {
     display: flex;
     overflow-x: auto;
+    margin-top: 30px;
 }
 button {
     letter-spacing: 1px;
@@ -60,8 +67,9 @@ button {
     outline: none;
     border: none;
     border-radius: 2px;
+    border: 1px solid #fff;
     background-color: #fff;
-    margin: 0 10px;
+    margin: 10px 10px;
     padding: 5px 10px;
     transition: 0.2s;
 }
@@ -72,6 +80,7 @@ button:hover {
     border-radius: 2px;
     transform: scale(1.05);
 }
+
 .section {
     min-height: 610px;
 }
